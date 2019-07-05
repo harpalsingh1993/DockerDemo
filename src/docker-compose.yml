@@ -1,0 +1,32 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    container_name: rabbitmq
+    hostname: my-rabbit
+    networks:
+      - my-network-name
+  Send:
+    image: sender
+    build:
+      context: ./Send
+      dockerfile: Dockerfile
+    depends_on:
+        - rabbitmq
+    networks:
+      - my-network-name
+  Receiver:
+    image: receiver
+    build:
+      context: ./Receive
+      dockerfile: Dockerfile
+    depends_on:
+        - rabbitmq
+    networks:
+      - my-network-name
+networks:
+  my-network-name:
+    driver: bridge
